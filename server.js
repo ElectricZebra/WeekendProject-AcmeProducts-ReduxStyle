@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const { syncAndSeed, models } = require('./db')
-const { Product } = models
+const { Product } = models;
+const path = require('path')
 
 const port = process.env.PORT || 3000;
 
@@ -9,6 +10,7 @@ syncAndSeed();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/products', async (req, res, next) => {
   try {
@@ -29,13 +31,14 @@ app.delete('/api/products/:id', async (req, res, next) => {
         id: req.params.id
       }
     })
+    res.status(201).send()
   }
   catch (ex) {
     next(ex)
   }
 })
 
-app.get('*', async (req, res, next) => {
+app.get('/api/products', async (req, res, next) => {
   try {const products = await Product.findAll()
   res.send(products)
   }

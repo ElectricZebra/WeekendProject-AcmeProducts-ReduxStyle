@@ -148,8 +148,8 @@ div#content{
         async componentDidMount(){
           const response = await axios.get('/api/products');
           this.setState( { products: response.data });
-
         }
+
         render(){
           const { products } = this.state;
           const { destroy, create } = this;
