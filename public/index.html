@@ -52,11 +52,27 @@ div#content{
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.1/redux.js'></script>
   </head>
   <body>
     <div id='root'></div>
     <script type='text/babel'>
       const { HashRouter, Route, Link } = ReactRouterDOM;
+
+      const store = Redux.createStore((state = [], action) => {
+        switch(action.type){
+          case 'SET_ITEMS':
+            state = action.items;
+            break;
+          case 'CREATE_ITEM':
+            state = [...state, action.item ];
+            break;
+          case 'DESTROY_ITEM':
+            state = state.filter(item => item.id !== action.item.id);
+            break;
+        }
+        return state;
+      })
 
       const Home = ()=> <h2>Home</h2>;
 
