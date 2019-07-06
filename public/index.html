@@ -74,22 +74,61 @@ div#content{
         return state;
       })
 
+      setTimeout(async () => {
+          const response = await axios.get('/api/products');
+          store.dispatch({ type: 'SET_ITEMS', items: [ response.data ]})
+          console.log('store.getstate()', store.getState())
+        }, 1);
+
+
       const Home = ()=> <h2>Home</h2>;
 
-      const Nav = ({ pathname, products })=> {
-        const links = [
+      class Nav extends React.Component {
+        constructor() {
+          super();
+          this.state = {
+            items: store.getState()
+          }
+        }
+        componentDidMount(){
+          this.unsubscribe = store.subscribe((state)=> {
+            this.setState({ items: store.getState() });
+          });
+        }
+        componentWillUnmount(){
+          this.unsubscribe()
+        }
+        render(){
+          const links = [
           { text: 'Home', to: '/'},
-          { text: `Products (${ products.length})`, to: '/products' },
+          { text: `Products (${ this.state.items.length ? this.state.items.length : null})`, to: '/products' },
           { text: 'Create A Product', to: '/products/create' },
         ];
-        return (
+        console.log(this.state)
+          return (
           <div id='nav'>
             {
-              links.map( (link, idx) => <Link key={ idx } to={ link.to } className={ pathname === link.to ? 'active': ''}>{ link.text }</Link>)
+              links.map( (link, idx) => <Link key={ idx } to={ link.to } className={ location.pathname === link.to ? 'active': ''}>{ link.text }</Link>)
             }
           </div>
        );
+        }
       }
+
+      // const Nav = ({ pathname, products })=> {
+      //   const links = [
+      //     { text: 'Home', to: '/'},
+      //     { text: `Products (${ products.length})`, to: '/products' },
+      //     { text: 'Create A Product', to: '/products/create' },
+      //   ];
+      //   return (
+      //     <div id='nav'>
+      //       {
+      //         links.map( (link, idx) => <Link key={ idx } to={ link.to } className={ pathname === link.to ? 'active': ''}>{ link.text }</Link>)
+      //       }
+      //     </div>
+      //  );
+      // }
       const Products = ({ products, destroy })=> {
         return (
           <div>
